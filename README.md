@@ -25,6 +25,7 @@ docs/
   notion-schema.md      NotionDBのプロパティ設計
   iphone-shortcuts.md   iPhoneショートカットの設計(食事ログ/朝夜ナッジ/ピーキング切替)
   notifications.md      通知(時刻オートメーション)の設定手順
+  dev-environment.md    iPhone/Windows/Macの3端末で開発を進めるための手順と分担
 notion/
   setup_db.py           NotionにDBを作成するセットアップスクリプト
   requirements.txt
