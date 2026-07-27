@@ -1,70 +1,107 @@
-# 開発環境 — iPhone / Windows / Mac の3端末で進める
+# 開発環境 — 時間帯によって変わる端末で、同じ作業を継続する
 
-このプロジェクトは「編集する場所」と「実際に動く場所」が分かれている。
-先にその役割を押さえると、どの端末で何をやるかが迷わなくなる。
+朝は iPhone、日中は Windows、夜は Mac —— のように、**時間帯によって手元にある端末が変わる**。
+どの端末も「同じ作業の続き」ができる状態にしておくのがこのドキュメントの目的。
+端末ごとに役割を固定しない(「この作業はMacでしかできない」を作らない)。
 
-| 端末 | 主な役割 | できること / できないこと |
+そのために必要なのは実質2つだけ。
+
+1. **作業状態が常にクラウド側にある**こと(手元の端末にしか無い状態を作らない)
+2. **どの端末からでも同じ環境に入れる**こと
+
+## 作業状態はどこにあるか
+
+このプロジェクトの状態は3か所に分かれている。どれも既にクラウド側にあるので、
+端末を変えても失われない。
+
+| 状態 | 置き場所 | 端末を変えたときの扱い |
 |---|---|---|
-| iPhone | **実行環境**(唯一の書き込み経路) | ショートカット作成・実機テスト・日々の記録。コード編集は不向き |
-| Mac | 編集環境(フル) | ドキュメント編集・`setup_db.py` 実行・git操作すべて |
-| Windows | 編集環境(フル) | 同上。Pythonと文字コードだけ後述の注意あり |
+| コード・ドキュメント | GitHub | `git pull` で追いつく |
+| 記録データ | Notion | 何もしなくていい。常に最新 |
+| Integrationトークン | 各端末のローカル `.env` / iCloud | 端末ごとに1回だけ設置(後述) |
 
-Notion DB は3端末から同じものを見る。DBの実体はクラウド上に1つだけなので、
-「端末ごとにDBを作る」必要はない。作るのは最初の1回だけ。
+**唯一の弱点はコード側**で、手元でコミットせずに端末を離れると、そのぶんは次の端末から見えない。
+ここだけ意識的に運用でカバーする。
 
-## 同期の原則
+## 端末を離れるときの作法
 
-コードとドキュメントは **GitHub 経由でのみ同期する**。
-iCloud や Dropbox でリポジトリごと共有するのはやめる(`.git` が壊れる原因になる)。
-
-作業を始める前と終わったあとに、必ず以下をやる。端末をまたぐ以上これが唯一の防御線になる。
+これが一番効く。区切りが悪くても、**離れるときは必ず push する**。
 
 ```
-# 作業前
-git pull origin <branch>
-
-# 作業後
 git add -A
-git commit -m "..."
+git commit -m "wip: 〜の途中"
 git push -u origin <branch>
 ```
 
-別端末に移る前に push し忘れると、次の端末で古い状態から書き始めてコンフリクトする。
-「端末を離れるときは push」を習慣にする。
+`wip:` のコミットは後でまとめて整理すればいいので、粒度は気にしなくていい。
+「キリのいいところまでやってからコミット」を守ろうとすると、
+中途半端な状態が手元の端末に取り残されて、次の時間帯に別端末で再開できなくなる。
+**コミットは完成の宣言ではなく、端末間の受け渡し**と考える。
 
-## シークレットの扱い
+再開するときは必ず最初に:
 
-Notion Integration Token は**リポジトリに絶対に入れない**。
+```
+git pull origin <branch>
+```
 
-- `notion/.env` は `.gitignore` 済み。各端末でローカルに作る(コミットされない)
-- iPhone 側のトークンは iCloud Drive の `Shortcuts/notion_config.json` に置く(git管理外)
-- 端末間でトークンを渡すときは、パスワードマネージャか、Notionの管理画面から再取得する
+pull を忘れて古い状態から書き始めるのが、複数端末で唯一起きる面倒なトラブル(コンフリクト)。
+逆に言えば、push と pull さえ守れば他に気をつけることはない。
 
-トークンは1つを3端末で使い回して問題ない。Integration単位の権限なので端末は区別されない。
+なお、コードとドキュメントの同期は **GitHub 経由でのみ**行うこと。
+iCloud や Dropbox でリポジトリのフォルダごと共有するのは避ける(`.git` が壊れる)。
 
-## Mac での準備
+## iPhone しかない時間帯にどこまでできるか
 
-追加インストールはほぼ不要(Pythonは標準搭載、なければ `brew install python`)。
+「iPhone だから編集は無理」とはならない。**Claude Code on the web**(https://claude.ai/code)を
+使えば、iPhone のブラウザから今と同じようにコード編集・コミット・push まで全部できる。
+リポジトリはクラウド上のコンテナにクローンされるので、iPhone 側に開発環境を作る必要もない。
+朝の通勤中に思いついた修正をその場で入れる、といった使い方ができる。
+
+iPhone から実行できないのは、実質これだけ:
+
+- **ローカルで `setup_db.py` を叩く** → ただし Claude Code on the web 側から実行できるし、
+  そもそも DB作成は最初の1回きりなので、この制約が効く場面はほぼ無い
+
+逆に **iPhone でしかできない**ことが1つある:
+
+- **ショートカットApp の編集**。ショートカット本体はファイルとして取り出せないため、
+  git にも載らず、Mac/Windows から編集もできない
+
+なのでショートカットを直す作業だけは、iPhone が手元にある時間帯に回す必要がある。
+設計は `docs/iphone-shortcuts.md` をテキストの「正」として残してあるので、
+PC の時間帯に「どう直すか」を書いておいて、iPhone の時間帯に実物へ反映する、という分け方ができる。
+
+## 各端末の初期セットアップ(1回だけ)
+
+以下は端末ごとに1回やれば、あとはどの時間帯でもそのまま使える。
+
+### Mac
 
 ```
 git clone https://github.com/CyberSakuraX/tsumu-rec.git
 cd tsumu-rec/notion
-cp .env.example .env      # エディタで NOTION_TOKEN / NOTION_PARENT_PAGE_ID を埋める
-export $(cat .env | xargs)
-python3 setup_db.py
+cp .env.example .env      # NOTION_TOKEN / NOTION_PARENT_PAGE_ID を埋める
 ```
 
-## Windows での準備
+### Windows
 
-Pythonは https://www.python.org/downloads/ から導入(インストーラの
-「Add python.exe to PATH」に必ずチェック)。コマンドは PowerShell を想定。
+Python は https://www.python.org/downloads/ から(インストーラの
+「Add python.exe to PATH」にチェック)。PowerShell 前提。
 
 ```powershell
 git clone https://github.com/CyberSakuraX/tsumu-rec.git
 cd tsumu-rec\notion
-Copy-Item .env.example .env    # エディタで中身を埋める
+Copy-Item .env.example .env    # 中身を埋める
+git config --global core.autocrlf input
+```
 
-# .env を読み込んで実行(PowerShell には export がないため)
+`core.autocrlf input` は Mac と往復したときに改行コードで全行差分になるのを防ぐため、
+クローン直後に必ず入れておく。時間帯ごとに端末を行き来する以上、これが無いと差分が読めなくなる。
+
+`setup_db.py` を Windows で実行する場合のみ、日本語のプロパティ名が文字化け・
+`UnicodeEncodeError` になるので `PYTHONUTF8=1` を付ける:
+
+```powershell
 Get-Content .env | ForEach-Object {
   if ($_ -match '^\s*([^#=]+)=(.*)$') {
     [Environment]::SetEnvironmentVariable($Matches[1].Trim(), $Matches[2].Trim())
@@ -74,37 +111,16 @@ $env:PYTHONUTF8 = "1"
 python setup_db.py
 ```
 
-Windows 固有の注意が2つある。
+### iPhone
 
-1. **文字コード**: DB名やプロパティ名が日本語なので、`PYTHONUTF8=1` を付けないと
-   コンソール出力が文字化けしたり `UnicodeEncodeError` で落ちることがある。上の手順に含めてある。
-2. **改行コード**: Mac/Windows を行き来すると差分が全行変更になることがある。
-   クローン直後に一度だけ設定しておく。
+- ブラウザで https://claude.ai/code を開き、このリポジトリを選べる状態にしておく
+- iCloud Drive の `Shortcuts/` に `notion_config.json` と `peaking_flag.txt` を配置
+  (`docs/iphone-shortcuts.md` 参照)
 
-```powershell
-git config --global core.autocrlf input
-```
+## トークンの扱い
 
-## iPhone での進め方
+Notion Integration Token は Integration 単位の権限なので、
+**1つを3端末で使い回して問題ない**。端末は区別されない。
 
-iPhone は「コードを書く端末」ではなく「作って試す端末」として使う。
-
-- **ショートカット作成・修正**: `docs/iphone-shortcuts.md` を見ながらショートカットAppで直接作る。
-  これは iPhone でしかできない作業で、Mac/Windows からは代行できない
-- **実機テスト**: 記録 → Notion側に行が増えたか確認、のループ
-- **ドキュメントの軽微な修正**: GitHub の Web / iOSアプリから直接編集してコミットできる。
-  ただし iPhone で編集したら、Mac/Windows 側で作業を再開する前に `git pull` を忘れない
-- **ショートカット本体は git 管理外**: ショートカットAppの中身はファイルとして取り出せないため、
-  設計は `docs/iphone-shortcuts.md` を正としてテキストで残す。実物を変更したら
-  ドキュメント側も直す、という運用にする
-
-## 分担の目安
-
-最初の立ち上げは、この順番が一番詰まりにくい。
-
-1. **Mac か Windows**: Notion Integration 作成 → 親ページ作成 → `setup_db.py` で DB作成 → `database_id` を控える
-2. **iPhone**: `notion_config.json` と `peaking_flag.txt` を iCloud Drive に配置 → ショートカット4本作成 → 通知設定
-3. **iPhone**: 数日ぶん記録して実際に溜める
-4. **どの端末でも**: Claude に分析を依頼(Notion MCP と Strava MCP を使うので端末を問わない)
-
-1 は片方の PC でやれば十分で、もう片方でやり直す必要はない。
+ただしリポジトリには絶対に入れないこと。`notion/.env` は `.gitignore` 済み。
+端末間で渡すときはパスワードマネージャ経由か、Notion の管理画面から再取得する。
