@@ -43,9 +43,13 @@ Internal Integration の Token が必要。
 false
 ```
 
-### 3. ショートカットを4つ作成
-`docs/iphone-shortcuts.md` の設計に従って「ご飯記録」「朝コンディション」「夜コンディション」
-「ピーキング切替」を作成する。リクエストボディの具体形は `docs/notion-api-payloads.md` を参照。
+### 3. ショートカットを作成(ヘルパー1つ + 本体4つ)
+**`docs/iphone-shortcuts-howto.md` のタップ手順どおりに進める。** 所要30〜40分。
+
+作る順番は「Notion書き込み」(ヘルパー)→ ご飯記録 → 朝コンディション → 夜コンディション →
+ピーキング切替。ヘルパーだけ先にテストして通しておくと、残り4つは詰まりにくい。
+
+設計の意図は `docs/iphone-shortcuts.md`、リクエストボディの仕様は `docs/notion-api-payloads.md`。
 
 ### 4. 通知(オートメーション)を設定
 `docs/notifications.md` の手順で朝7:00・夜21:30の時刻オートメーションを設定する。

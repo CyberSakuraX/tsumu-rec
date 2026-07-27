@@ -25,7 +25,8 @@ docs/
   setup-status.md       セットアップの完了状況と残作業(まずここを見る)
   notion-schema.md      NotionDBのプロパティ設計
   notion-api-payloads.md ショートカットから投げるリクエストボディのコピペ元
-  iphone-shortcuts.md   iPhoneショートカットの設計(食事ログ/朝夜ナッジ/ピーキング切替)
+  iphone-shortcuts.md   iPhoneショートカットの設計(何を作るか)
+  iphone-shortcuts-howto.md ショートカットの作成手順(どう作るか。タップ順)
   notifications.md      通知(時刻オートメーション)の設定手順
 notion/
   setup_db.py           NotionにDBを作成するセットアップスクリプト
@@ -45,8 +46,8 @@ notion/
       「🏃 マラソン管理」ページにコネクトする(ショートカットがAPIを直接叩くために必要)
 - [ ] **iPhone側の設定ファイル** — iCloud Drive の `Shortcuts` フォルダに
       `notion_config.json`(token・database_id)と `peaking_flag.txt`(初期値 `false`)を作成
-- [ ] **ショートカット作成** — `docs/iphone-shortcuts.md` の設計と
-      `docs/notion-api-payloads.md` のリクエストボディに従い4つ作成
+- [ ] **ショートカット作成** — `docs/iphone-shortcuts-howto.md` のタップ手順に従い、
+      ヘルパー「Notion書き込み」1つ + 本体4つを作成(30〜40分)
 - [ ] **通知設定** — `docs/notifications.md` の手順で朝7:00・夜21:30の時刻オートメーションを設定
 - [ ] **動作確認** — 同じ日に2回記録して、行が増えず更新されることを確認
 
