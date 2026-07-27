@@ -22,7 +22,9 @@
 docs/
   requirements-v1.md   要件定義書(原本)
   decisions.md         未確定事項の決定内容
+  setup-status.md       セットアップの完了状況と残作業(まずここを見る)
   notion-schema.md      NotionDBのプロパティ設計
+  notion-api-payloads.md ショートカットから投げるリクエストボディのコピペ元
   iphone-shortcuts.md   iPhoneショートカットの設計(食事ログ/朝夜ナッジ/ピーキング切替)
   notifications.md      通知(時刻オートメーション)の設定手順
 notion/
@@ -35,23 +37,21 @@ notion/
 
 ## セットアップ手順
 
-1. **Notion Integration作成**: https://www.notion.so/my-integrations でIntegrationを作成しTokenを取得
-2. **親ページ作成**: Notion上に空ページ(例:「マラソン管理」)を作り、作成したIntegrationを招待。ページIDを控える
-3. **DB作成**:
-   ```
-   cd notion
-   cp .env.example .env   # NOTION_TOKEN / NOTION_PARENT_PAGE_ID を編集
-   export $(cat .env | xargs)
-   python setup_db.py
-   ```
-   出力された `database_id` を控える
-4. **iPhone側の設定ファイル**: iCloud Drive の `Shortcuts` フォルダに `notion_config.json`(token・database_id)と
-   `peaking_flag.txt`(初期値 `false`)を作成
-5. **ショートカット作成**: `docs/iphone-shortcuts.md` の設計に従い、
-   「ご飯記録」「朝コンディション」「夜コンディション」「ピーキング切替」の4つを作成
-6. **通知設定**: `docs/notifications.md` の手順で朝7:00・夜21:30の時刻オートメーションを設定
-7. **分析**: 準備ができたら、Claudeに「食事とパフォーマンスの相関を分析して」のように話しかけると、
-   `.claude/skills/marathon-nutrition-analysis/SKILL.md` の手順でNotion MCP + Strava MCPを使って分析する
+進捗と残作業の詳細は `docs/setup-status.md` を参照。
+
+- [x] **親ページ・DB作成** — 作成済み。`database_id` = `0e691aca69b34d49866d5c3494222d5c`
+      ([🏃 マラソン管理](https://app.notion.com/p/3aae273ad43b813691f6ef321c0423f3) 配下)
+- [ ] **Notion Integration作成** — https://www.notion.so/my-integrations でTokenを取得し、
+      「🏃 マラソン管理」ページにコネクトする(ショートカットがAPIを直接叩くために必要)
+- [ ] **iPhone側の設定ファイル** — iCloud Drive の `Shortcuts` フォルダに
+      `notion_config.json`(token・database_id)と `peaking_flag.txt`(初期値 `false`)を作成
+- [ ] **ショートカット作成** — `docs/iphone-shortcuts.md` の設計と
+      `docs/notion-api-payloads.md` のリクエストボディに従い4つ作成
+- [ ] **通知設定** — `docs/notifications.md` の手順で朝7:00・夜21:30の時刻オートメーションを設定
+- [ ] **動作確認** — 同じ日に2回記録して、行が増えず更新されることを確認
+
+準備ができたら、Claudeに「食事とパフォーマンスの相関を分析して」のように話しかけると、
+`.claude/skills/marathon-nutrition-analysis/SKILL.md` の手順でNotion MCP + Strava MCPを使って分析する。
 
 ## 決定済みの仕様(要件定義書 v1.0 セクション8への回答)
 - DB配置: 新規に親ページを作成しその配下に配置

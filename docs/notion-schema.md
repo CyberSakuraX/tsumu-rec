@@ -32,8 +32,14 @@ DB名: `食事・コンディション ログ`
 | 塩分電解質メモ | rich_text | 自由記述。ピーキングフラグ=trueの時のみ入力 | 夜ナッジ(ピーキング期のみ) |
 | 胃腸の負担感 | select | `なし` / `軽度` / `中度` / `重度`。ピーキングフラグ=trueの時のみ入力 | 夜ナッジ(ピーキング期のみ) |
 
-## 作成方法
-`notion/setup_db.py` を参照。Notion Integration Token と、DBの配置先となる親ページIDが必要。
+## 作成状況
+このスキーマのDBは Notion 上に**作成済み**。
+
+- database_id: `0e691aca69b34d49866d5c3494222d5c`
+- URL: https://app.notion.com/p/0e691aca69b34d49866d5c3494222d5c
+- 親ページ: 🏃 マラソン管理
+
+別ワークスペースに同じDBを再作成したい場合のみ `notion/setup_db.py` を使う(通常は実行不要)。
 
 ## Notion API 書き込み例
 

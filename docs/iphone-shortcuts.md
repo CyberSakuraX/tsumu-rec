@@ -6,10 +6,13 @@ Notion Token と database_id を1箇所にまとめ、全ショートカット�
 
 ```json
 {
-  "token": "secret_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-  "database_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  "token": "<Notion Integration Secret>",
+  "database_id": "0e691aca69b34d49866d5c3494222d5c"
 }
 ```
+
+`database_id` は作成済みDBの実IDなのでそのまま使える。`token` の取得手順は `docs/setup-status.md` を参照。
+各ショートカットが投げるリクエストボディの具体形は `docs/notion-api-payloads.md` にまとめてある。
 
 各ショートカットの先頭で「ファイルを取得」→「入力からディクショナリを取得」でこのJSONを読み込み、
 `token` / `database_id` を以降のNotion APIリクエストに使い回す。
